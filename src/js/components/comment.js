@@ -1,20 +1,20 @@
-import { speak } from '@wordpress/a11y';
+import { speak } from "@wordpress/a11y";
 
 /**
  * Post comment via REST API.
  */
 const postComment = () => {
 	// Comment form.
-	const commentForm = document.querySelector('.js-comment-respond-form');
+	const commentForm = document.querySelector(".js-comment-respond-form");
 
 	// Bail if there is no comment form.
 	if (!commentForm) {
 		return;
 	}
 
-	const endpoint = 'https://11ty.foxnet.fi/wp-json/wp/v2/comments';
+	const endpoint = "https://thecurrentla.com/wp-json/wp/v2/comments";
 
-	const spinner = document.querySelector('.js-spinner');
+	const spinner = document.querySelector(".js-spinner");
 
 	/**
 	 * Handle comment form submit via REST API.
@@ -22,12 +22,12 @@ const postComment = () => {
 	 * @param {string} message Message to show when comment is send.
 	 * @param {string} className Class to use in message.
 	 */
-	function handleMessage(message, className = 'is-style-success') {
+	function handleMessage(message, className = "is-style-success") {
 		// Remove content from the form.
-		commentForm.innerHTML = '';
+		commentForm.innerHTML = "";
 
 		// Add custom message.
-		const messageContent = document.createElement('p');
+		const messageContent = document.createElement("p");
 		messageContent.classList.add(className);
 		messageContent.textContent = message;
 
@@ -46,7 +46,7 @@ const postComment = () => {
 		e.preventDefault();
 
 		// Show spinner.
-		spinner.classList.remove('is-hidden');
+		spinner.classList.remove("is-hidden");
 
 		// Get form elements.
 		const [postId, comment, name, email, url, address] = e.target.elements;
@@ -58,7 +58,7 @@ const postComment = () => {
 
 		// Bail if "address" is given (honeypot).
 		if (address.value) {
-			spinner.classList.add('is-hidden');
+			spinner.classList.add("is-hidden");
 			return;
 		}
 
@@ -73,41 +73,45 @@ const postComment = () => {
 
 		// Post new comment.
 		fetch(endpoint, {
-			method: 'POST',
+			method: "POST",
 			headers: {
-				'Content-Type': 'application/json',
+				"Content-Type": "application/json",
 			},
 			body: data,
 		})
 			.then((response) => {
 				if (response.ok === true) {
 					handleMessage(
-						'Thanks for commenting! Your comment is under moderation.',
-						'is-style-success',
+						"Thanks for commenting! Your comment is under moderation.",
+						"is-style-success"
 					);
 
-					comment.value = '';
-					name.value = '';
-					email.value = '';
-					url.value = '';
+					comment.value = "";
+					name.value = "";
+					email.value = "";
+					url.value = "";
 
 					return response.json();
 				}
 
 				return Promise.reject(response);
 			})
-			.then( ( responseObject ) => { /* eslint-disable-line */
+			.then((responseObject) => {
+				/* eslint-disable-line */
 				// responseObject is the JSON from our response.
 				// Hide spinner.
-				spinner.classList.add('is-hidden');
+				spinner.classList.add("is-hidden");
 			})
 			.catch((error) => {
-				handleMessage('Something went wrong! Can you try again.', 'is-style-error');
-				console.error( 'Error:', error ); /* eslint-disable-line */
+				handleMessage(
+					"Something went wrong! Can you try again.",
+					"is-style-error"
+				);
+				console.error("Error:", error); /* eslint-disable-line */
 			});
 	}
 
-	commentForm.addEventListener('submit', handleSubmit);
+	commentForm.addEventListener("submit", handleSubmit);
 };
 
 export default postComment;
